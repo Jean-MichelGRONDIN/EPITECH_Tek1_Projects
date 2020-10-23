@@ -1,0 +1,181 @@
+#!/usr/bin/php
+<?php
+
+function print_usage()
+{
+    print("");
+    return (0);
+}
+
+function find_the_bigger($first_deriv)
+{
+    $i = 0;
+    $save = 0;
+
+    while ($i != count($first_deriv) - 1) {
+        if ($first_deriv[$i][1] > $first_deriv[$save][1])
+            $save = $i;
+        $i = $i + 1;
+    }
+    return ($save);
+}
+
+function titration_part_two($values)
+{
+    $i = 1;
+    $tmp = 0;
+    $first_deriv = [];
+
+    printf("Second derivative:\n");
+    while ($i != count($values) - 1) {
+        $tmp = ($values[$i + 1][1] - $values[$i - 1][1]) / ($values[$i + 1][0] - $values[$i - 1][0]);
+        array_push($first_deriv, [$values[$i][0], $tmp]);
+        printf("%.1f ml -> %.2f\n", $values[$i][0], $tmp);
+        $i = $i + 1;
+    }
+    return ($first_deriv);
+}
+
+function calc_that($estimated, $start_ml, $start_ph, $between, $calc)
+{
+    $index = 0;
+
+    printf("%.1f ml -> %.2f\n", $start_ml, $start_ph);
+    array_push($estimated, [$start_ml, $start_ph]);
+    while ($index < $between) {
+        $start_ml = $start_ml + 0.1;
+        $start_ph = $start_ph + $calc;
+        array_push($estimated, [$start_ml, $start_ph]);
+        printf("%.1f ml -> %.2f\n", $start_ml, $start_ph);
+        $index = $index + 1;
+    }
+    return ($estimated);
+}
+
+function find_the_position($seconde_deriv, $equivalent)
+{
+    $pos = 0;
+
+    while ($pos != count($seconde_deriv)) {
+        if ($seconde_deriv[$pos][0] == $equivalent) {
+            return ($pos);
+        }
+        $pos = $pos + 1;
+    }
+    return (-1);
+}
+
+function    find_the_estimated_equivalent($estimated)
+{
+    $i = 0;
+    $start = $estimated[0][1];
+
+    while ($i != count($estimated)) {
+        if ($start > 0 && $estimated[$i][1] < 0) {
+            return ($estimated[$i - 1][0]);
+        }
+        if ($start < 0 && $estimated[$i][1] > 0) {
+            return ($estimated[$i - 1][0]);
+        }
+        $i = $i + 1;
+    }
+    return (-1);
+}
+
+function calc_estimated($seconde_deriv, $ml)
+{
+    $estimated = [];
+    $pos_equi = find_the_position($seconde_deriv, $ml);
+    $between = ($seconde_deriv[$pos_equi][0] - $seconde_deriv[$pos_equi - 1][0]) * 10;
+    $calc = ($seconde_deriv[$pos_equi][1] - $seconde_deriv[$pos_equi - 1][1]) / $between;
+
+    printf("\nSecond derivative estimated:\n");
+    $estimated = calc_that($estimated, $seconde_deriv[$pos_equi - 1][0], $seconde_deriv[$pos_equi - 1][1], $between, $calc);
+    $between = ($seconde_deriv[$pos_equi + 1][0] - $seconde_deriv[$pos_equi][0]) * 10;
+    $calc = ($seconde_deriv[$pos_equi + 1][1] - $seconde_deriv[$pos_equi][1]) / $between;
+    $estimated = calc_that($estimated, $seconde_deriv[$pos_equi][0], $seconde_deriv[$pos_equi][1], $between, $calc);
+    printf("\nEquivalent point at %.1f ml\n", find_the_estimated_equivalent($estimated));
+    return (0);
+}
+
+function titration($values)
+{
+    $i = 1;
+    $tmp = 0;
+    $first_deriv = [];
+    $seconde_deriv = [];
+    $equivalent = 0;
+
+    printf("Derivative:\n");
+    while ($i != count($values) - 1) {
+        $tmp = ($values[$i + 1][1] - $values[$i - 1][1]) / ($values[$i + 1][0] - $values[$i - 1][0]);
+        array_push($first_deriv, [$values[$i][0], $tmp]);
+        printf("%.1f ml -> %.2f\n", $values[$i][0], $tmp);
+        $i = $i + 1;
+    }
+    $equivalent = find_the_bigger($first_deriv);
+    printf("\nEquivalent point at %.1f ml\n\n", $first_deriv[$equivalent][0]);
+    $seconde_deriv = titration_part_two($first_deriv);
+    return (calc_estimated($seconde_deriv, $first_deriv[$equivalent][0]));
+}
+
+function is_a_good_line($check)
+{
+    $check_res = explode(";", $check);
+    if (count($check_res) != 2) {
+        return (FALSE);
+    }
+    if (is_numeric($check_res[0]) == FALSE) {
+        return (FALSE);
+    }
+    if (is_numeric($check_res[1]) == FALSE) {
+        return (FALSE);
+    }
+    return (TRUE);
+}
+
+function initialise($file)
+{
+    $i = 0;
+    $file = explode("\n", $file);
+    $line = NULL;
+    $line_values = [];
+
+    while ($i != count($file)) {
+        $line = explode(";", $file[$i]);
+        if (count($line) != 2) {
+            fprintf(STDERR, "Error detected in the file !\n");
+            return (84);
+        }
+        if (count($file) != count(array_filter($file, "is_a_good_line"))) {
+            fprintf(STDERR, "Error detected in the file !\n");
+            return (84);
+        }
+        array_push($line_values, [floatval($line[0]), floatval($line[1])]);
+        $i = $i + 1;
+    }
+    return (titration($line_values));
+}
+
+function main($argc, $argv)
+{
+    if ($argc != 2) {
+        fprintf(STDERR, "Error wrong number of arguments !\n");
+        return (84);
+    }
+    if ($argv[1] == "-h")
+        return(printf_usage);
+    if (file_exists($argv[1])) {
+        $file = file_get_contents($argv[1]);
+        return (initialise($file));
+    } else {
+        fprintf(STDERR, "Error the file doesn t exist !\n");
+        return (84);
+    }
+    return (0);
+}
+
+$ret = main($argc, $argv);
+
+exit($ret);
+?>

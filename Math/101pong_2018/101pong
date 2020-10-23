@@ -1,0 +1,51 @@
+#!/usr/bin/python3
+
+import sys
+import math
+
+def display_normal(position, time):
+    v_x = float(position[3]) - float(position[0]);
+    v_y = float(position[4]) - float(position[1]);
+    v_z = float(position[5]) - float(position[2]);
+    print("The velocity vector of the ball is:");
+    print("(%.2f, " % v_x , "%.2f, "% v_y , "%.2f)"% v_z);
+
+
+    x = float(v_x) * float(time) + float(position[3]);
+    y = float(v_y) * float(time) + float(position[4]);
+    z = float(v_z) * float(time) + float(position[5]);
+    print("At time t + {0}, ball coodinates will be:".format(str(time)));
+    print("(%.2f, " % x , "%.2f, "% y , "%.2f)"% z);
+
+
+    if (float(v_z) != 0 and (-float(position[5])) / float(v_z) >= 0 and float(position[3]) != 0):
+        angle = float(v_z) / math.sqrt(math.pow(float(v_x), 2) + math.pow(float(v_y), 2) + math.pow(float(v_z), 2));
+        print("The incidence angle is:");
+        print("%.2f " % ((math.acos(angle) - (math.pi / 2)) * 180 / math.pi), "degrees");
+    else:
+        print("The ball won’t reach the bat.");
+
+def usage():
+    print("USAGE");
+    print("     ./101pong x0 y0 z0 x1 y1 z1 n");
+    print("");
+    print("DESCRIPTION");
+    print("       x0   ball abscissa at time t - 1");
+    print("       y0   ball ordinate at time t - 1");
+    print("       z0   ball altitude at time t - 1");
+    print("       x1   ball abscissa at time t");
+    print("       y1   ball ordinate at time t");
+    print("       z1   ball altitude at time t");
+    print("       n    time shift (greater than or equal to zero, integer)");
+
+def main():
+    if (len(sys.argv) != 8):
+        usage();
+        return (0);
+    if (int(sys.argv[7]) < 0):
+        usage();
+    else:
+        position = sys.argv[1:7];
+        time = sys.argv[7];
+        display_normal(position, time);
+main();

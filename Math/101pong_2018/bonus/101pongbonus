@@ -1,0 +1,75 @@
+#!/usr/bin/python3
+
+import sys
+import math
+from tkinter import *
+
+def display_normal(position, time, window):
+    v_x = float(position[3]) - float(position[0]);
+    v_y = float(position[4]) - float(position[1]);
+    v_z = float(position[5]) - float(position[2]);
+    sentence = Label(window, text="The velocity vector of the ball is:");
+    sentence.pack();
+    sentence = Label(window, text="({0}, {1}, {2})".format(str(v_x), str(v_y), str(v_z)));
+    sentence.pack();
+
+
+    x = float(v_x) * float(time) + float(position[3]);
+    y = float(v_y) * float(time) + float(position[4]);
+    z = float(v_z) * float(time) + float(position[5]);
+    sentence = Label(window, text="At time t + {0}, ball coodinates will be:".format(str(time)));
+    sentence.pack();
+    sentence = Label(window, text="({0}, {1}, {2})".format(str(x), str(y), str(z)));
+    sentence.pack();
+
+
+    if (float(v_z) != 0 and (-float(position[5])) / float(v_z) >= 0 and float(position[3]) != 0):
+        angle = float(v_z) / math.sqrt(math.pow(float(v_x), 2) + math.pow(float(v_y), 2) + math.pow(float(v_z), 2));
+        angle = (math.acos(angle) - (math.pi / 2)) * 180 / math.pi;
+        sentence = Label(window, text="The incidence angle is:");
+        sentence.pack();
+        sentence = Label(window, text="({0} degrees)".format(str(angle)));
+        sentence.pack();
+    else:
+        sentence = Label(window, text="The ball won’t reach the bat.");
+        sentence.pack();
+
+def usage(window):
+    sentence = Label(window, text="USAGE");
+    sentence.pack();
+    sentence = Label(window, text="     ./101pong x0 y0 z0 x1 y1 z1 n");
+    sentence.pack();
+    sentence = Label(window, text="");
+    sentence.pack();
+    sentence = Label(window, text="DESCRIPTION");
+    sentence.pack();
+    sentence = Label(window, text="       x0   ball abscissa at time t - 1");
+    sentence.pack();
+    sentence = Label(window, text="       y0   ball ordinate at time t - 1");
+    sentence.pack();
+    sentence = Label(window, text="       z0   ball altitude at time t - 1");
+    sentence.pack();
+    sentence = Label(window, text="       x1   ball abscissa at time t     ");
+    sentence.pack();
+    sentence = Label(window, text="       y1   ball ordinate at time t     ");
+    sentence.pack();
+    sentence = Label(window, text="       z1   ball altitude at time t     ");
+    sentence.pack();
+    sentence = Label(window, text="       n    time shift (greater than or equal to zero, integer)");
+    sentence.pack();
+
+def main():
+    window = Tk();
+    window.title("101pong custom");
+    if (len(sys.argv) != 8):
+        usage(window);
+        return (0);
+        window.mainloop();
+    if (int(sys.argv[7]) < 0):
+        usage(window);
+    else:
+        position = sys.argv[1:7];
+        time = sys.argv[7];
+        display_normal(position, time, window);
+    window.mainloop();
+main();
