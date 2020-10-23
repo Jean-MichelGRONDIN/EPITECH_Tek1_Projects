@@ -1,0 +1,5 @@
+
+If you want the easy way to install it in the alias DO :
+    ./intall_shortcute
+    (remember to give all right needed);
+If not Good Luck and Have Fun.

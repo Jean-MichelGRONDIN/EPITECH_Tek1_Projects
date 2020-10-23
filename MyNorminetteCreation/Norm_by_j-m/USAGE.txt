@@ -1,0 +1,31 @@
+USAGE
+    (manual)$> ./Normichel path
+    (after the intallation script)$> Normichel path
+
+OR JUST
+    (manual)$> ./Normichel
+    (after the intallation script)$> Normichel
+
+DESCRIPTION
+    path           from where the norm checker is launched
+                   (if nothing, it's from where you are)
+
+ --This norm checker will find inexistant errors if :
+  - you make an error in a string/char between quotation marks,
+  - in the 6 first lines, the biggest part of all verifications avoid the
+    6 first lines of a file because it's supposed to be the
+    header and nothing else,
+
+WHAT IS CHECKED :
+      - number of chars by line,
+      - tabulations,
+      - indentation,
+      - missing or corrupted header,
+      - comma(s),
+      - number of lines in a function,
+      - spaces at the end of a line,
+      - spaces around '=',
+      - space after 'while', 'if', 'for' and 'return',
+      - frequents banned functions,
+      - number of functions in a file,
+      - comment(s) inside a function or header files.
