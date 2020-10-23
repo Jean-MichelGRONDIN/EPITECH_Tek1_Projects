@@ -1,0 +1,33 @@
+& = no chance to pass without;
+############################################################################
+#
+# A map must have 2 line :
+#
+#&-first line : obstacles;
+# -second line : ground (full of '~');
+#
+#&The map must be at minimum 20 chars;
+#
+# The ground id repressented by a line of '~'.
+#&The map can't exed 400 ~ of distance (distance based on obstacle line lenght).
+#
+#&You can't place an obstacle on the 18 first cases/characters/'~'.
+#
+#&An character = 1/20 so not the same obstacle 2 times under 21 characters.
+#
+#&The obstacle line must start with : '#'.
+#
+#&Obstacles are Numbers :
+#
+#    ANCHOR = 0,
+#    BARREL1 = 1,
+#    BARREL2 = 2,
+#    BOMB = 3,
+#    STEERING_WHEEL = 4,
+#    STONE1 = 5,
+#    STONE2 = 6,
+#    STONE3 = 7,
+#    STONE4 = 8,
+#    STONE5 = 9,
+#
+############################################################################
